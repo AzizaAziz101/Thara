@@ -1,12 +1,8 @@
 import fetch from "node-fetch";
 
-
-
 export default async function handler(req, res) {
-    // 🔹 Prüfen, ob der API Key verfügbar ist
-  console.log("API Key:", process.env.MISTRAL_API_KEY ? "vorhanden" : "nicht vorhanden");
   if (req.method !== "POST") {
-    return res.status(405).json({ error: "Only POST allowed" });
+    return res.status(405).json({ error: "Nur POST erlaubt" });
   }
 
   try {
@@ -22,11 +18,11 @@ Antworte professionell, empathisch und kurz (max. 120 Wörter).
 Kein medizinischer oder rechtlicher Rat.
 `;
 
-    // Anfrage an Mistral API
+    // 🔹 Mistral API aufrufen
     const response = await fetch("https://api.mistral.ai/v1/chat/completions", {
       method: "POST",
       headers: {
-        Authorization: `Bearer ${process.env.MISTRAL_API_KEY}`,
+        Authorization: `Bearer ${process.env.MISTRAL_API_KEY}`, // Key über Vercel
         "Content-Type": "application/json"
       },
       body: JSON.stringify({
@@ -42,15 +38,13 @@ Kein medizinischer oder rechtlicher Rat.
 
     const data = await response.json();
 
-    console.log("Mistral API Response:", data); // Debugging
-
     if (!data.choices || data.choices.length === 0) {
       return res.status(500).json({ error: "Keine Antwort von Mistral erhalten" });
     }
 
     res.status(200).json({ reply: data.choices[0].message.content });
   } catch (err) {
-    console.error("❌ Fehler:", err);
+    console.error("Fehler:", err);
     res.status(500).json({ error: "Interner Serverfehler" });
   }
 }
