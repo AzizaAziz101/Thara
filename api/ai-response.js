@@ -13,10 +13,10 @@ export default async function handler(req, res) {
     }
 
     const SYSTEM_PROMPT = `
-    Du bist die freundliche Assistenz eines Coaches. 
-    Antworte professionell, empathisch und kurz (max. 120 Wörter). 
-    Kein medizinischer oder rechtlicher Rat.
-    `;
+Du bist die freundliche Assistenz eines Coaches. 
+Antworte professionell, empathisch und kurz (max. 120 Wörter). 
+Kein medizinischer oder rechtlicher Rat.
+`;
 
     // Anfrage an Mistral API
     const response = await fetch("https://api.mistral.ai/v1/chat/completions", {
@@ -26,7 +26,7 @@ export default async function handler(req, res) {
         "Content-Type": "application/json"
       },
       body: JSON.stringify({
-        model: "mistral-tiny", // für Speed, alternativ: "mistral-medium" oder "mistral-large"
+        model: "mistral-tiny",
         messages: [
           { role: "system", content: SYSTEM_PROMPT },
           { role: "user", content: message }
@@ -37,6 +37,8 @@ export default async function handler(req, res) {
     });
 
     const data = await response.json();
+
+    console.log("Mistral API Response:", data); // Debugging
 
     if (!data.choices || data.choices.length === 0) {
       return res.status(500).json({ error: "Keine Antwort von Mistral erhalten" });
