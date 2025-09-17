@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <title>Kontaktformular mit AI</title>
+</head>
+<body>
+  <h1>Schreib uns dein Anliegen</h1>
+  <form id="contactForm">
+    <textarea id="message" rows="5" cols="40" placeholder="Beschreibe dein Anliegen..."></textarea><br>
+    <button type="submit">Absenden</button>
+  </form>
+
+  <h2>Antwort der AI:</h2>
+  <div id="response"></div>
+
+  <script>
+    document.getElementById("contactForm").addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const message = document.getElementById("message").value;
+
+      const res = await fetch("/api/ai-response", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ message })
+      });
+
+      const data = await res.json();
+      document.getElementById("response").innerText = data.reply || data.error;
+    });
+  </script>
+</body>
+</html>
